@@ -7,10 +7,13 @@
 
 #include "base/files/file_path.h"
 #include "base/sequenced_task_runner.h"
-#include "brave/browser/extensions/brave_component_extension.h"
+#include "brave/components/brave_component_updater/browser/brave_component.h"
 
 class BraveIpfsClientUpdaterTest;
 
+using brave_component_updater::BraveComponent;
+
+// TODO(bridiver) - this doesn't belong under extensions
 namespace extensions {
 
 #if defined(OS_WIN)
@@ -50,9 +53,9 @@ const std::string kIpfsClientComponentBase64PublicKey =
     "ewIDAQAB";
 #endif
 
-class BraveIpfsClientUpdater : public BraveComponentExtension {
+class BraveIpfsClientUpdater : public BraveComponent {
  public:
-   BraveIpfsClientUpdater();
+   BraveIpfsClientUpdater(BraveComponent::Delegate* delegate);
    ~BraveIpfsClientUpdater() override;
 
   void Register();
@@ -63,7 +66,8 @@ class BraveIpfsClientUpdater : public BraveComponentExtension {
 
  protected:
   void OnComponentReady(const std::string& component_id,
-      const base::FilePath& install_dir) override;
+      const base::FilePath& install_dir,
+      const std::string& manifest) override;
 
  private:
   friend class ::BraveIpfsClientUpdaterTest;
@@ -82,7 +86,8 @@ class BraveIpfsClientUpdater : public BraveComponentExtension {
 };
 
 // Creates the BraveIpfsClientUpdater
-std::unique_ptr<BraveIpfsClientUpdater> BraveIpfsClientUpdaterFactory();
+std::unique_ptr<BraveIpfsClientUpdater>
+BraveIpfsClientUpdaterFactory(BraveComponent::Delegate* delegate);
 
 }  // namespace extensions
 
